@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  HRSD Font Family (all weights)                                    */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'HRSD';
+  src: url('./assets/fonts/HRSD-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HRSD';
+  src: url('./assets/fonts/HRSD-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HRSD';
+  src: url('./assets/fonts/HRSD-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HRSD';
+  src: url('./assets/fonts/HRSD-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HRSD';
+  src: url('./assets/fonts/HRSD-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HRSD Title';
+  src: url('./assets/fonts/HRSD-Title.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Light Theme                                                       */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  :root {
+    --background: 0 0% 97%;
+    --foreground: 220 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+
+    --primary: 162 72% 33%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 10% 95%;
+    --secondary-foreground: 220 15% 15%;
+
+    --muted: 210 10% 93%;
+    --muted-foreground: 220 5% 46%;
+
+    --accent: 210 15% 93%;
+    --accent-foreground: 162 72% 28%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 10% 90%;
+    --input: 220 10% 88%;
+    --ring: 162 72% 33%;
+
+    --radius: 0.75rem;
+
+    --chat-user: 162 72% 33%;
+    --chat-user-foreground: 0 0% 100%;
+    --chat-bot: 0 0% 100%;
+    --chat-bot-foreground: 220 15% 15%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 10% 30%;
+    --sidebar-primary: 162 72% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 10% 95%;
+    --sidebar-accent-foreground: 220 15% 15%;
+    --sidebar-border: 220 10% 91%;
+    --sidebar-ring: 162 72% 33%;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /*  Dark Theme — true dark, neutral grays, no green tint            */
+  /* ---------------------------------------------------------------- */
+
+  .dark {
+    --background: 225 12% 8%;
+    --foreground: 210 10% 93%;
+
+    --card: 225 10% 11%;
+    --card-foreground: 210 10% 93%;
+
+    --popover: 225 10% 11%;
+    --popover-foreground: 210 10% 93%;
+
+    --primary: 162 65% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 8% 16%;
+    --secondary-foreground: 210 10% 90%;
+
+    --muted: 225 8% 16%;
+    --muted-foreground: 220 5% 55%;
+
+    --accent: 225 8% 18%;
+    --accent-foreground: 162 55% 55%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 225 8% 18%;
+    --input: 225 8% 18%;
+    --ring: 162 65% 42%;
+
+    --chat-user: 162 65% 36%;
+    --chat-user-foreground: 0 0% 100%;
+    --chat-bot: 225 10% 14%;
+    --chat-bot-foreground: 210 10% 90%;
+
+    --sidebar-background: 225 12% 9%;
+    --sidebar-foreground: 210 10% 85%;
+    --sidebar-primary: 162 65% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 225 8% 15%;
+    --sidebar-accent-foreground: 210 10% 90%;
+    --sidebar-border: 225 8% 16%;
+    --sidebar-ring: 162 65% 42%;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base styles                                                       */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-hrsd antialiased;
+  }
+
+  html[dir="rtl"] {
+    direction: rtl;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
