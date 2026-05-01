@@ -2,15 +2,48 @@
 // Centralised API client for the frontend.
 // All backend communication goes through here.
 
-const SDP_SERVICE_URL = import.meta.env.VITE_SDP_SERVICE_URL ?? "http://localhost:8080";
-const AI_GATEWAY_URL = import.meta.env.VITE_AI_GATEWAY_URL ?? "http://localhost:3002";
-const FILES_SVC_URL = import.meta.env.VITE_FILES_SVC_URL ?? "http://api.taaheel.sumerge.com/files-svc";
+const SDP_SERVICE_URL =
+  import.meta.env.VITE_SDP_SERVICE_URL ?? 'http://localhost:8080';
+const AI_GATEWAY_URL =
+  import.meta.env.VITE_AI_GATEWAY_URL ?? 'http://localhost:3002';
+const FILES_SVC_URL =
+  import.meta.env.VITE_FILES_SVC_URL ??
+  'http://api.taaheel.sumerge.com/files-svc';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
 /* ------------------------------------------------------------------ */
 
-/** Matches the UserResponse DTO from sdp-service. */
+/** Login response from sdp-service HRSD API. */
+export interface LoginResponseDto {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  tokenType: string;
+  employeeId: number;
+  nationalId: string;
+  mobileNumber: string;
+  employeeType: string;
+  employeeName: string;
+  employeeStatus: string;
+  emailAddress: string;
+  workLocation: number;
+  workLocationName: string;
+  actualDepartment: string;
+  serviceYears: number;
+  rank: string;
+  title: string;
+  gender: string;
+  nationality: string;
+  extension: string;
+  mobile: string;
+  address: string;
+  department: string;
+  classification: string;
+  addressId: number;
+}
+
+/** User profile stored in the frontend after login. */
 export interface UserProfile {
   id: string;
   name: string;
@@ -22,11 +55,28 @@ export interface UserProfile {
    * text is never sent to or received from the client.
    */
   role: string;
+  // Extended fields from HRSD login
+  accessToken?: string;
+  refreshToken?: string;
+  employeeId?: number;
+  nationalId?: string;
+  mobileNumber?: string;
+  employeeType?: string;
+  emailAddress?: string;
+  workLocation?: number;
+  workLocationName?: string;
+  actualDepartment?: string;
+  serviceYears?: number;
+  rank?: string;
+  title?: string;
+  gender?: string;
+  nationality?: string;
+  department?: string;
 }
 
 /** Matches the ChatMessage shape used by the ai-gateway. */
 export interface ChatMessageDto {
-  role: "system" | "user" | "assistant" | "tool";
+  role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
   toolCallId?: string;
 }
@@ -58,13 +108,13 @@ export class ApiError extends Error {
     message: string,
   ) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const body = await res.text().catch(() => "");
+    const body = await res.text().catch(() => '');
     let message: string;
     try {
       const parsed = JSON.parse(body);
@@ -81,13 +131,40 @@ async function handleResponse<T>(res: Response): Promise<T> {
 /*  SDP Service (login)                                               */
 /* ------------------------------------------------------------------ */
 
-export async function login(userId: string, password: string): Promise<UserProfile> {
+export async function login(
+  userId: string,
+  password: string,
+): Promise<UserProfile> {
   const res = await fetch(`${SDP_SERVICE_URL}/api/users/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, password }),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: userId, password }),
   });
-  return handleResponse<UserProfile>(res);
+  const data = await handleResponse<LoginResponseDto>(res);
+
+  // Map the HRSD login response to UserProfile
+  return {
+    id: userId || data.nationalId, // Use nationalId as id, fallback to supplied userId
+    name: data.employeeName,
+    disabled: false, // Not provided in HRSD response, default to false
+    role: data.employeeType === 'Internal' ? 'GENERAL' : 'GENERAL', // Map employeeType to role
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    employeeId: data.employeeId,
+    nationalId: data.nationalId,
+    mobileNumber: data.mobileNumber,
+    employeeType: data.employeeType,
+    emailAddress: data.emailAddress,
+    workLocation: data.workLocation,
+    workLocationName: data.workLocationName,
+    actualDepartment: data.actualDepartment,
+    serviceYears: data.serviceYears,
+    rank: data.rank,
+    title: data.title,
+    gender: data.gender,
+    nationality: data.nationality,
+    department: data.department,
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -96,12 +173,12 @@ export async function login(userId: string, password: string): Promise<UserProfi
 
 export async function uploadFile(file: File): Promise<FileUploadResponse> {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append('file', file);
 
   const res = await fetch(`${FILES_SVC_URL}/upload`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "X-Bypass-Interceptor": "true",
+      'X-Bypass-Interceptor': 'true',
     },
     body: formData,
   });
@@ -122,8 +199,8 @@ export async function sendMessage(
   fileIds?: string[],
 ): Promise<ChatResponse> {
   const res = await fetch(`${AI_GATEWAY_URL}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       message,
       role,
