@@ -41,6 +41,9 @@ const Chat = () => {
 
   // Conversation history sent to the ai-gateway for multi-turn context.
   const historyRef = useRef<ChatMessageDto[]>([]);
+  
+  // Opaque Cohere chat history (OCI provider) - echoed back without modification.
+  const cohereChatHistoryRef = useRef<{ role: string; message?: string; toolResults?: [] }[] | undefined>(undefined);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,10 +78,12 @@ const Chat = () => {
         undefined,
         user?.id,
         fileIds,
+        cohereChatHistoryRef.current,
       );
 
-      // 3. Store the updated history for the next turn.
+      // 3. Store the updated history and cohereChatHistory for the next turn.
       historyRef.current = response.history;
+      cohereChatHistoryRef.current = response.cohereChatHistory;
 
       // 4. Show the assistant response.
       const botMsg: Message = {

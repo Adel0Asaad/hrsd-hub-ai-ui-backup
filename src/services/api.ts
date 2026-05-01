@@ -36,6 +36,11 @@ export interface ChatResponse {
   text: string;
   history: ChatMessageDto[];
   toolsUsed: { name: string; durationMs: number }[];
+  /**
+   * Opaque chat history from Cohere (OCI provider only).
+   * Frontend should echo this back in the next request.
+   */
+  cohereChatHistory?: { role: string; message?: string; toolResults?: [] }[];
 }
 
 export interface FileUploadResponse {
@@ -120,6 +125,7 @@ export async function sendMessage(
   conversationId?: string,
   userId?: string,
   fileIds?: string[],
+  cohereChatHistory?: { role: string; message: string }[],
 ): Promise<ChatResponse> {
   const res = await fetch(`${AI_GATEWAY_URL}/chat`, {
     method: "POST",
@@ -131,6 +137,7 @@ export async function sendMessage(
       conversationId,
       userId,
       fileIds,
+      cohereChatHistory,
     }),
   });
   return handleResponse<ChatResponse>(res);
